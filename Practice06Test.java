@@ -1,3 +1,4 @@
+import java.lang.*;
 
 public class Practice06Test {
 	
@@ -26,14 +27,40 @@ public class Practice06Test {
 	
 	public boolean isPalindrome(String item) {
 		clearData();
-		for (int i = 0; i < item.length(); i++) {
+		for (int i = 0; i < item.length(); i++) { //fill both types of arrays with the same string
 			stack.push(item.substring(i, i+1));
 			queue.enqueue(item.substring(i, i+1));
 		}
 
 		while (! stack.empty() && ! queue.empty()) {
-			if (! stack.pop().equals(queue.dequeue())) {
-				return false;
+			String stackPeek = stack.peek().toString(); //look at the next item in the stack
+			String currQueue = queue.dequeue().toString(); //dequeue the next item in the queue
+			char charCurrQueue = currQueue.charAt(0); //make the queue item a character
+			if(Character.isLetter(charCurrQueue)==false) { //if that character is not a letter
+				currQueue = queue.dequeue().toString(); //dequeue the next item
+				charCurrQueue = currQueue.charAt(0); //make that item a character
+			}
+			char charStackPeek = stackPeek.charAt(0); //make the stack item a character
+			if(stackPeek.equals(" ")||!Character.isLetter(charStackPeek)) { //if the stack item is a not character or is a space
+				stack.pop(); //get rid of that item in the stack
+				if (!currQueue.equals(" ")) { //if the item from the queue is not a space
+					String stackPop = (String)stack.pop(); //pop the next item from the stack
+					if (!stackPop.equalsIgnoreCase(currQueue)) { //if the item from the stack and the item from the queue don't match, return false
+						return false;
+					}
+				}
+			}
+			else if (!currQueue.equals(" ")) { //if the stack item is a letter, make sure the queue item isn't a space
+				String stackPop = (String)stack.pop(); //pop the next item in the stack
+				if (!stackPop.equalsIgnoreCase(currQueue)) { //compare the two
+					return false;
+				}
+			}
+			if(stack.empty()&&!queue.empty()){ //if the stack is empty before the queue
+				String nextInQueue = queue.dequeue().toString(); //check what's left in the queue
+				char next = nextInQueue.charAt(0);
+				if(Character.isLetter(next)) //if there's another character in the queue it's not a pallindrome, but if it's not a character then it still is a palindrome
+					return false;
 			}
 		}
 		
